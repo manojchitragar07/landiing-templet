@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manoj Chitragar | Creative Technologist & Systems Architect</title>
+    <meta name="description" content="Portfolio of Manoj Chitragar - Creative Technologist & Full-Stack Systems Architect. Featuring real-time collaborative cursor swarm and interactive systems engineering showcase.">
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Lucide icons via unpkg CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <!-- Background Technical Grid & Ambient Lighting -->
+    <div class="grid-background"></div>
+    <div class="ambient-glow-1"></div>
+    <div class="ambient-glow-2"></div>
+
+    <!-- Canvas Layers: Trails & Matrix Rain -->
+    <canvas id="matrix-canvas"></canvas>
+    <canvas id="trails-canvas"></canvas>
+
+    <!-- Autonomous Cursors Swarm Layer -->
+    <div id="cursors-container"></div>
+
+    <!-- Top System HUD / Telemetry Bar -->
+    <header class="hud-header">
+        <div class="hud-left">
+            <div class="hud-pill">
+                <span class="hud-dot"></span>
+                <span class="hud-val text-neon-green">SYS_ONLINE</span>
+            </div>
+            <div class="hud-pill">
+                <span>LOCAL:</span>
+                <span id="hud-time" class="hud-val">--:--:--</span>
+            </div>
+            <div class="hud-pill">
+                <span id="hud-fps" class="hud-val">60 FPS</span>
+            </div>
+            <div class="hud-pill">
+                <span id="hud-coords" class="hud-val">X:0000 Y:0000</span>
+            </div>
+        </div>
+
+        <div class="hud-center">
+            <div class="hud-pill">
+                <span>SWARM:</span>
+                <span id="hud-swarm-status" class="hud-val text-neon-cyan">INITIALIZING</span>
+            </div>
+            <div class="hud-pill">
+                <span>VELOCITY:</span>
+                <span id="hud-swarm-speed" class="hud-val text-neon-cyan">0 px/s</span>
+            </div>
+        </div>
+
+        <div class="hud-right">
+            <button id="btn-sound-toggle" class="hud-btn" title="Toggle Synthesized Web Audio">
+                <i data-lucide="volume-2" style="width: 13px; height: 13px;"></i>
+                <span id="sound-status">AUDIO: [OFF]</span>
+            </button>
+            <button id="btn-cursor-mode" class="hud-btn" title="Toggle Swarm Behavior">
+                <i data-lucide="mouse-pointer" style="width: 13px; height: 13px;"></i>
+                <span>SWARM: [ROAM]</span>
+            </button>
+            <button id="btn-matrix-toggle" class="hud-btn" title="Toggle Cyber Matrix Rain">
+                <i data-lucide="binary" style="width: 13px; height: 13px;"></i>
+                <span>MATRIX</span>
+            </button>
+            <button id="btn-replay-intro" class="hud-btn" title="Replay Speed-Ramping & Typing Animation">
+                <i data-lucide="rotate-ccw" style="width: 13px; height: 13px;"></i>
+                <span>REPLAY</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="app-container">
+        <!-- Hero Section: Convergence & Typing Target -->
+        <section class="hero-section" id="hero">
+            <div class="telemetry-overlay" id="intro-telemetry">
+                <span>TARGET_SYSTEM: [MANOJ_CHITRAGAR.ID]</span>
+                <span>•</span>
+                <span>COLLABORATIVE_NODES: 14</span>
+                <span>•</span>
+                <span>RAMP_PROFILE: EXPONENTIAL</span>
+            </div>
+
+            <!-- Central Hero Box that cursors target and converge upon -->
+            <div class="hero-box" id="hero-title-container">
+                <span class="corner-crosshair corner-tl">+</span>
+                <span class="corner-crosshair corner-tr">+</span>
+                <span class="corner-crosshair corner-bl">+</span>
+                <span class="corner-crosshair corner-br">+</span>
+
+                <div class="hero-header-tag">
+                    <i data-lucide="cpu" style="width: 14px; height: 14px;"></i>
+                    <span>PROTOCOL: CREATIVE TECHNOLOGIST // V4.8</span>
+                </div>
+
+                <!-- Main Typing Target: Name & Subtitle -->
+                <h1 class="hero-title-text" id="hero-title"></h1>
+                <div class="hero-subtitle-text" id="hero-subtitle"></div>
+
+                <!-- Call to action buttons revealed after typing completes -->
+                <div class="hero-cta-group post-intro-reveal">
+                    <a href="#projects" class="btn-primary">
+                        <i data-lucide="layers" style="width: 15px; height: 15px;"></i>
+                        <span>EXPLORE PROJECTS</span>
+                    </a>
+                    <a href="#terminal-section" class="btn-secondary">
+                        <i data-lucide="terminal" style="width: 15px; height: 15px;"></i>
+                        <span>OPEN TERMINAL</span>
+                    </a>
+                    <a href="#contact" class="btn-secondary">
+                        <i data-lucide="send" style="width: 15px; height: 15px;"></i>
+                        <span>INITIATE CONTACT</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Quick Telemetry Stat Tiles -->
+            <div class="stats-grid post-intro-reveal" style="width: 100%; max-width: 900px; margin-top: 36px;">
+                <div class="stat-card">
+                    <div class="stat-value text-neon-cyan">6+</div>
+                    <div class="stat-label">Years Engineering High-Perf Systems</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value text-neon-green">&lt;15ms</div>
+                    <div class="stat-label">Sub-Second UI & WASM Latency</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value text-neon-purple">99.98%</div>
+                    <div class="stat-label">Production Pipeline Reliability</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value text-neon-amber">100k+</div>
+                    <div class="stat-label">Global Users Supported</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Cyber Terminal Sandbox Section -->
+        <section class="section-wrap post-intro-reveal" id="terminal-section">
+            <div class="section-header">
+                <div class="section-tag">// INTERACTIVE SHELL ENVIRONMENT</div>
+                <h2 class="section-title">Terminal Console</h2>
+                <p class="section-desc" style="color: #94a3b8; font-size: 14px; margin-top: 6px;">Execute live commands to query system architecture, view bio, inspect repositories, or test matrix rain.</p>
+            </div>
+
+            <div class="terminal-window" id="cyber-terminal">
+                <div class="terminal-header">
+                    <div class="terminal-dots">
+                        <div class="tdot tdot-red"></div>
+                        <div class="tdot tdot-yellow"></div>
+                        <div class="tdot tdot-green"></div>
+                    </div>
+                    <div class="terminal-title">manoj@antigravity-sys:~ (zsh)</div>
+                    <div style="font-family: var(--font-mono); font-size: 10px; color: #64748b;">UTF-8 / TLS 1.3</div>
+                </div>
+
+                <div class="terminal-output">
+                    <!-- Dynamic command output goes here -->
+                </div>
+
+                <form class="terminal-form">
+                    <span class="terminal-prompt">visitor@manoj-sys:~$</span>
+                    <input type="text" class="terminal-input" placeholder="Type 'help', 'about', 'skills', 'projects', or 'matrix'..." autocomplete="off" spellcheck="false">
+                </form>
+            </div>
+        </section>
+
+        <!-- Featured Projects Showcase Section -->
+        <section class="section-wrap post-intro-reveal" id="projects">
+            <div class="section-header">
+                <div class="section-tag">// PRODUCTION REPOSITORIES & DEPLOYMENTS</div>
+                <h2 class="section-title">Featured Works</h2>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="project-filters">
+                <button class="project-filter-btn active" data-filter="all">All Systems [4]</button>
+                <button class="project-filter-btn" data-filter="systems">Distributed & Backend</button>
+                <button class="project-filter-btn" data-filter="creative">Creative Tech & WebGL</button>
+                <button class="project-filter-btn" data-filter="ai">AI & Vector Systems</button>
+            </div>
+
+            <!-- Projects Grid with Spotlight Cards -->
+            <div class="projects-grid">
+                <!-- Project 1 -->
+                <div class="spotlight-card project-card" data-category="creative">
+                    <div>
+                        <div class="card-top">
+                            <span class="card-badge">WEBGL / CANVAS</span>
+                            <span style="font-family: var(--font-mono); font-size: 11px; color: #64748b;">2024</span>
+                        </div>
+                        <h3 class="card-title">Synapse-UI Node Graph</h3>
+                        <p class="card-desc">High-framerate collaborative node editor capable of rendering 10,000+ interactive connected nodes at 60 FPS using custom Canvas2D & WebGL shaders.</p>
+                        <div class="card-tags">
+                            <span class="card-tag-pill">TypeScript</span>
+                            <span class="card-tag-pill">WebGL</span>
+                            <span class="card-tag-pill">Zustand</span>
+                            <span class="card-tag-pill">WebSockets</span>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <a href="https://github.com" target="_blank" class="card-link">
+                            <i data-lucide="github" style="width: 14px; height: 14px;"></i>
+                            <span>View Source</span>
+                        </a>
+                        <a href="#" class="card-link">
+                            <i data-lucide="external-link" style="width: 14px; height: 14px;"></i>
+                            <span>Live Demo</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Project 2 -->
+                <div class="spotlight-card project-card" data-category="ai">
+                    <div>
+                        <div class="card-top">
+                            <span class="card-badge">RUST / WASM / AI</span>
+                            <span style="font-family: var(--font-mono); font-size: 11px; color: #64748b;">2024</span>
+                        </div>
+                        <h3 class="card-title">HyperVector-Engine</h3>
+                        <p class="card-desc">Sub-millisecond approximate nearest neighbor (ANN) vector search engine compiled into WebAssembly for in-browser zero-network semantic embedding retrieval.</p>
+                        <div class="card-tags">
+                            <span class="card-tag-pill">Rust</span>
+                            <span class="card-tag-pill">WASM</span>
+                            <span class="card-tag-pill">HNSW</span>
+                            <span class="card-tag-pill">SIMD</span>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <a href="https://github.com" target="_blank" class="card-link">
+                            <i data-lucide="github" style="width: 14px; height: 14px;"></i>
+                            <span>View Source</span>
+                        </a>
+                        <a href="#" class="card-link">
+                            <i data-lucide="terminal" style="width: 14px; height: 14px;"></i>
+                            <span>Benchmarks</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Project 3 -->
+                <div class="spotlight-card project-card" data-category="systems">
+                    <div>
+                        <div class="card-top">
+                            <span class="card-badge">GO / DISTRIBUTED</span>
+                            <span style="font-family: var(--font-mono); font-size: 11px; color: #64748b;">2023</span>
+                        </div>
+                        <h3 class="card-title">Chronos Event Stream</h3>
+                        <p class="card-desc">Distributed event streaming broker written in Go with raft consensus, processing 100,000+ financial telemetry events per second with sub-5ms p99 latency.</p>
+                        <div class="card-tags">
+                            <span class="card-tag-pill">Go</span>
+                            <span class="card-tag-pill">gRPC</span>
+                            <span class="card-tag-pill">Kafka</span>
+                            <span class="card-tag-pill">Docker</span>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <a href="https://github.com" target="_blank" class="card-link">
+                            <i data-lucide="github" style="width: 14px; height: 14px;"></i>
+                            <span>View Source</span>
+                        </a>
+                        <a href="#" class="card-link">
+                            <i data-lucide="file-text" style="width: 14px; height: 14px;"></i>
+                            <span>Architecture Docs</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Project 4 -->
+                <div class="spotlight-card project-card" data-category="creative">
+                    <div>
+                        <div class="card-top">
+                            <span class="card-badge">NEXT.JS / WEBGPU</span>
+                            <span style="font-family: var(--font-mono); font-size: 11px; color: #64748b;">2023</span>
+                        </div>
+                        <h3 class="card-title">Nexus Shader Studio</h3>
+                        <p class="card-desc">Next-generation procedural shader playground with real-time compilation, audio reactivity, and export pipelines for generative web designers.</p>
+                        <div class="card-tags">
+                            <span class="card-tag-pill">Next.js 15</span>
+                            <span class="card-tag-pill">WebGPU</span>
+                            <span class="card-tag-pill">GLSL</span>
+                            <span class="card-tag-pill">WebAudio</span>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <a href="https://github.com" target="_blank" class="card-link">
+                            <i data-lucide="github" style="width: 14px; height: 14px;"></i>
+                            <span>View Source</span>
+                        </a>
+                        <a href="#" class="card-link">
+                            <i data-lucide="external-link" style="width: 14px; height: 14px;"></i>
+                            <span>Live Demo</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Capabilities & Skills Matrix -->
+        <section class="section-wrap post-intro-reveal" id="capabilities">
+            <div class="section-header">
+                <div class="section-tag">// SYSTEM CAPABILITIES</div>
+                <h2 class="section-title">Core Competencies</h2>
+            </div>
+
+            <div class="skills-grid">
+                <!-- Card 1 -->
+                <div class="skill-box">
+                    <div class="skill-category-title">
+                        <i data-lucide="code" style="width: 16px; height: 16px;"></i>
+                        <span>CREATIVE & FRONTEND</span>
+                    </div>
+                    <ul class="skill-list">
+                        <li class="skill-item">
+                            <span>TypeScript & Modern JS</span>
+                            <div class="skill-meter"><div class="skill-fill" style="width: 95%;"></div></div>
+                        </li>
+                        <li class="skill-item">
+                            <span>React, Next.js & Vue</span>
+                            <div class="skill-meter"><div class="skill-fill" style="width: 92%;"></div></div>
+                        </li>
+                        <li class="skill-item">
+                            <span>Canvas2D, WebGL & Three.js</span>
+                            <div class="skill-meter"><div class="skill-fill" style="width: 88%;"></div></div>
+                        </li>
+                        <li class="skill-item">
+                            <span>Tailwind, CSS Architecture</span>
+                            <div class="skill-meter"><div class="skill-fill" style="width: 94%;"></div></div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="skill-box">
+                    <div class="skill-category-title">
+                        <i data-lucide="server" style="width: 16px; height: 16px;"></i>
+                        <span>BACKEND & SYSTEMS</span>
+                    </div>
+                    <ul class="skill-list">
+                        <li class="skill-item">
+                            <span>Node.js / Bun Runtime</span>
+                            <div class="skill-meter"><div class="skill-fill" style="width: 94%;"></div></div>
+                        </li>
+                        <li class="skill-item">
+                            <span>Go & Microservices</span>
+                            <div class="skill-meter"><div class="skill-fill" style="width: 85%;"></div></div>
+                        </li>
+                        <li class="skill-item">
+                            <span>Rust (WASM & CLI)</span>
+                            <div class="skill-meter"><div class="skill-fill" style="width: 78%;"></div></div>
+                        </li>
+                        <li class="skill-item">
+                            <span>GraphQL, REST, gRPC</span>
+                            <div class="skill-meter"><div class="skill-fill" style="width: 90%;"></div></div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="skill-box">
+                    <div class="skill-category-title">
+                        <i data-lucide="database" style="width: 16px; height: 16px;"></i>
+                        <span>DATA & AI INFRA</span>
+                    </div>
+                    <ul class="skill-list">
+                        <li class="skill-item">
+                            <span>PostgreSQL & ClickHouse</span>
+                            <div class="skill-meter"><div class="skill-fill" style="width: 88%;"></div></div>
+                        </li>
+                        <li class="skill-item">
+                            <span>Redis & In-Memory Caching</span>
+                            <div class="skill-meter"><div class="skill-fill" style="width: 92%;"></div></div>
+                        </li>
+                        <li class="skill-item">
+                            <span>Vector DBs & Embeddings</span>
+                            <div class="skill-meter"><div class="skill-fill" style="width: 86%;"></div></div>
+                        </li>
+                        <li class="skill-item">
+                            <span>LLM Orchestration & RAG</span>
+                            <div class="skill-meter"><div class="skill-fill" style="width: 84%;"></div></div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="skill-box">
+                    <div class="skill-category-title">
+                        <i data-lucide="cloud" style="width: 16px; height: 16px;"></i>
+                        <span>DEVOPS & CLOUD</span>
+                    </div>
+                    <ul class="skill-list">
+                        <li class="skill-item">
+                            <span>Docker & Containers</span>
+                            <div class="skill-meter"><div class="skill-fill" style="width: 90%;"></div></div>
+                        </li>
+                        <li class="skill-item">
+                            <span>Kubernetes & Orchestration</span>
+                            <div class="skill-meter"><div class="skill-fill" style="width: 80%;"></div></div>
+                        </li>
+                        <li class="skill-item">
+                            <span>AWS & Cloudflare Edge</span>
+                            <div class="skill-meter"><div class="skill-fill" style="width: 87%;"></div></div>
+                        </li>
+                        <li class="skill-item">
+                            <span>CI/CD & Observability</span>
+                            <div class="skill-meter"><div class="skill-fill" style="width: 91%;"></div></div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact & Payload Transmission Section -->
+        <section class="section-wrap post-intro-reveal" id="contact">
+            <div class="section-header">
+                <div class="section-tag">// SECURE TRANSMISSION CHANNEL</div>
+                <h2 class="section-title">Initiate Contact</h2>
+            </div>
+
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <p style="font-size: 15px; line-height: 1.7; color: #94a3b8;">
+                        Have a project that requires bleeding-edge technical precision, high-velocity creative execution, or resilient system architecture? Let's connect.
+                    </p>
+
+                    <a href="mailto:manojchitragar@gmail.com" class="contact-method">
+                        <i data-lucide="mail" style="color: var(--neon-cyan); width: 20px; height: 20px;"></i>
+                        <div>
+                            <div style="font-size: 11px; font-family: var(--font-mono); color: #64748b;">DIRECT EMAIL</div>
+                            <div style="font-weight: 600;">manojchitragar@gmail.com</div>
+                        </div>
+                    </a>
+
+                    <a href="https://github.com" target="_blank" class="contact-method">
+                        <i data-lucide="github" style="color: var(--neon-cyan); width: 20px; height: 20px;"></i>
+                        <div>
+                            <div style="font-size: 11px; font-family: var(--font-mono); color: #64748b;">GITHUB REPOSITORIES</div>
+                            <div style="font-weight: 600;">github.com/manojchitragar</div>
+                        </div>
+                    </a>
+
+                    <a href="https://linkedin.com" target="_blank" class="contact-method">
+                        <i data-lucide="linkedin" style="color: var(--neon-cyan); width: 20px; height: 20px;"></i>
+                        <div>
+                            <div style="font-size: 11px; font-family: var(--font-mono); color: #64748b;">PROFESSIONAL NETWORK</div>
+                            <div style="font-weight: 600;">linkedin.com/in/manojchitragar</div>
+                        </div>
+                    </a>
+                </div>
+
+                <div>
+                    <form id="contact-form">
+                        <div class="form-field">
+                            <label class="form-label">Identification / Sender Name</label>
+                            <input type="text" class="form-input" required placeholder="e.g. Elena Rostova / Acme Labs">
+                        </div>
+                        <div class="form-field">
+                            <label class="form-label">Return Communication Channel (Email)</label>
+                            <input type="email" class="form-input" required placeholder="elena@acme.ai">
+                        </div>
+                        <div class="form-field">
+                            <label class="form-label">Encrypted Payload / Message</label>
+                            <textarea class="form-textarea" rows="4" required placeholder="Discuss project scope, timeline, engineering challenges..."></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; cursor: pointer;">
+                            <i data-lucide="send" style="width: 15px; height: 15px;"></i>
+                            <span>TRANSMIT PAYLOAD</span>
+                        </button>
+                    </form>
+                    <div id="form-feedback" class="hidden" style="margin-top: 14px;"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="site-footer post-intro-reveal">
+            <div>
+                <span>© 2026 MANOJ CHITRAGAR.</span>
+                <span style="color: var(--neon-cyan);">[ALL SYSTEMS OPERATIONAL]</span>
+            </div>
+            <div>
+                <span>BUILT WITH NATIVE CANVAS2D, WEB AUDIO API & MODERN JS</span>
+            </div>
+        </footer>
+    </main>
+
+    <!-- Master Script Bundle: Runs locally (file://) and on HTTP servers -->
+    <script src="js/bundle.js"></script>
+
+    <!-- Initialize Lucide Icons -->
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
+        });
+    </script>
+</body>
+</html>
+
