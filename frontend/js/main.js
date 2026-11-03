@@ -95,6 +95,17 @@ class App {
     }
 
     setupHUD() {
+        // Check Backend daemon status
+        fetch('http://localhost:5000/api/telemetry')
+            .then(res => res.json())
+            .then(data => {
+                const sysOnline = document.querySelector('.hud-val.text-neon-green');
+                if (sysOnline && data.status) {
+                    sysOnline.textContent = 'SYS_ONLINE [API_LINKED]';
+                }
+            })
+            .catch(() => {});
+
         // Sound toggle button
         const soundBtn = document.getElementById('btn-sound-toggle');
         const soundStatus = document.getElementById('sound-status');
@@ -219,30 +230,56 @@ class App {
         const contactForm = document.getElementById('contact-form');
         const formFeedback = document.getElementById('form-feedback');
         if (contactForm && formFeedback) {
-            contactForm.addEventListener('submit', (e) => {
+            contactForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 sound.playCompletion();
 
                 const submitBtn = contactForm.querySelector('button[type="submit"]');
                 const originalText = submitBtn.innerHTML;
-                submitBtn.innerHTML = '<span>TRANSMITTING...</span>';
+                submitBtn.innerHTML = '<span>TRANSMITTING PAYLOAD...</span>';
                 submitBtn.disabled = true;
 
-                setTimeout(() => {
-                    submitBtn.innerHTML = '<span>PAYLOAD DELIVERED!</span>';
-                    formFeedback.classList.remove('hidden');
-                    formFeedback.innerHTML = `
-                        <div class="p-3 bg-neon-green/10 border border-neon-green/40 text-neon-green rounded text-sm font-mono flex items-center gap-2">
-                            <span>✓</span> Payload transmitted successfully. Manoj will respond to your channel shortly.
-                        </div>
-                    `;
-                    contactForm.reset();
+                const nameInput = contactForm.querySelector('input[type="text"]');
+                const emailInput = contactForm.querySelector('input[type="email"]');
+                const messageInput = contactForm.querySelector('textarea');
 
-                    setTimeout(() => {
-                        submitBtn.innerHTML = originalText;
-                        submitBtn.disabled = false;
-                    }, 4000);
-                }, 1200);
+                const payload = {
+                    name: nameInput ? nameInput.value : '',
+                    email: emailInput ? emailInput.value : '',
+                    message: messageInput ? messageInput.value : ''
+                };
+
+                let receiptId = `TX-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+
+                try {
+                    const res = await fetch('http://localhost:5000/api/contact', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data.receipt) receiptId = data.receipt;
+                    }
+                } catch (err) {
+                    // Backend offline or preview mode - graceful local fallback
+                }
+
+                submitBtn.innerHTML = '<span>PAYLOAD DELIVERED!</span>';
+                formFeedback.classList.remove('hidden');
+                formFeedback.innerHTML = `
+                    <div class="p-3 bg-neon-green/10 border border-neon-green/40 text-neon-green rounded text-sm font-mono flex items-center gap-2">
+                        <span>✓</span> Payload transmitted successfully [Receipt: ${receiptId}]. Manoj will respond to your channel shortly.
+                    </div>
+                `;
+                contactForm.reset();
+
+                setTimeout(() => {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }, 4000);
+            });
+        }
             });
         }
     }

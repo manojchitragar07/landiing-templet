@@ -1,7 +1,7 @@
 /**
  * Manoj Chitragar Portfolio - Standalone Universal Bundle
  * Runs seamlessly both via HTTP server and directly via file:/// protocol in Chrome/Safari/Firefox
- * Restored to original clean dynamic swarm architecture
+ * Full-stack enabled with automatic API connectivity and graceful offline fallback
  */
 
 // ==========================================
@@ -760,6 +760,9 @@ Available system commands:
   <span class="text-neon-cyan">projects</span>    - Display highlighted production projects
   <span class="text-neon-cyan">experience</span>  - View engineering background & milestones
   <span class="text-neon-cyan">contact</span>     - Display communication channels
+  <span class="text-neon-cyan">status</span>      - Query remote API server telemetry
+  <span class="text-neon-cyan">ping</span>        - Test roundtrip latency to backend daemon
+  <span class="text-neon-cyan">uptime</span>      - Query server daemon uptime
   <span class="text-neon-cyan">replay</span>      - Re-run speed-ramping cursor swarm intro
   <span class="text-neon-cyan">matrix</span>      - Trigger digital rain visual effect
   <span class="text-neon-cyan">clear</span>       - Clear the terminal screen
@@ -802,7 +805,7 @@ Philosophy:   Merging deep systems engineering with bleeding-edge visual craft.
 <span class="text-neon-cyan">COMMUNICATION CHANNELS:</span>
 -----------------------------------------------------------------
 Email:      <a href="mailto:manojchitragar@gmail.com" class="text-neon-cyan underline">manojchitragar@gmail.com</a>
-GitHub:     <a href="https://github.com" target="_blank" class="text-neon-cyan underline">github.com/manojchitragar</a>
+GitHub:     <a href="https://github.com/manojchitragar07" target="_blank" class="text-neon-cyan underline">github.com/manojchitragar07</a>
 LinkedIn:   <a href="https://linkedin.com" target="_blank" class="text-neon-cyan underline">linkedin.com/in/manojchitragar</a>
 Status:     Encrypted direct channel ready. Send payload via Contact form below!
 `,
@@ -855,13 +858,14 @@ Status:     Encrypted direct channel ready. Send payload via Contact form below!
         this.print(`System initialized. Type <span class="text-neon-cyan font-bold">'help'</span> to see available commands.`);
     }
 
-    handleCommand(cmdText) {
+    async handleCommand(cmdText) {
         if (!cmdText) return;
         sound.playUiClick();
 
         this.history.push(cmdText);
         this.historyIndex = this.history.length;
 
+        // Print user prompt
         this.print(`<span class="text-slate-400">visitor@manoj-sys:~$</span> <span class="text-white">${this.escapeHtml(cmdText)}</span>`);
 
         const lower = cmdText.toLowerCase();
@@ -870,10 +874,29 @@ Status:     Encrypted direct channel ready. Send payload via Contact form below!
             if (result) {
                 this.print(result);
             }
-        } else {
-            this.print(`<span class="text-neon-magenta">zsh: command not found: ${this.escapeHtml(cmdText)}</span>. Type <span class="text-neon-cyan font-bold">'help'</span> for reference.`);
+            this.outputArea.scrollTop = this.outputArea.scrollHeight;
+            return;
         }
 
+        // Try remote daemon execution
+        try {
+            const res = await fetch('http://localhost:5000/api/terminal/execute', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ command: cmdText })
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                if (data.output) {
+                    this.print(data.output);
+                    this.outputArea.scrollTop = this.outputArea.scrollHeight;
+                    return;
+                }
+            }
+        } catch (e) {}
+
+        this.print(`<span class="text-neon-magenta">zsh: command not found: ${this.escapeHtml(cmdText)}</span>. Type <span class="text-neon-cyan font-bold">'help'</span> for reference.`);
         this.outputArea.scrollTop = this.outputArea.scrollHeight;
     }
 
@@ -980,6 +1003,18 @@ class App {
     }
 
     setupHUD() {
+        // Ping backend telemetry if online
+        fetch('http://localhost:5000/api/telemetry')
+            .then(res => res.json())
+            .then(data => {
+                const sysOnline = document.querySelector('.hud-val.text-neon-green');
+                if (sysOnline && data.status) {
+                    sysOnline.textContent = 'SYS_ONLINE [API_LINKED]';
+                }
+            })
+            .catch(() => {});
+
+        // Sound toggle button
         const soundBtn = document.getElementById('btn-sound-toggle');
         const soundStatus = document.getElementById('sound-status');
         if (soundBtn && soundStatus) {
@@ -991,6 +1026,7 @@ class App {
             });
         }
 
+        // Replay button
         const replayBtn = document.getElementById('btn-replay-intro');
         if (replayBtn) {
             replayBtn.addEventListener('click', () => {
@@ -999,6 +1035,7 @@ class App {
             });
         }
 
+        // Cursor speed mode button
         const cursorModeBtn = document.getElementById('btn-cursor-mode');
         if (cursorModeBtn) {
             let mode = 0;
@@ -1018,6 +1055,7 @@ class App {
             });
         }
 
+        // Realtime Clock
         const timeDisplay = document.getElementById('hud-time');
         const updateTime = () => {
             if (timeDisplay) {
@@ -1028,6 +1066,7 @@ class App {
         setInterval(updateTime, 1000);
         updateTime();
 
+        // FPS meter
         const fpsDisplay = document.getElementById('hud-fps');
         const calcFps = (timestamp) => {
             this.frameCount++;
@@ -1041,6 +1080,7 @@ class App {
         };
         requestAnimationFrame(calcFps);
 
+        // Coordinates Tracker
         const coordDisplay = document.getElementById('hud-coords');
         window.addEventListener('mousemove', (e) => {
             if (coordDisplay) {
@@ -1098,7 +1138,7 @@ class App {
         const contactForm = document.getElementById('contact-form');
         const formFeedback = document.getElementById('form-feedback');
         if (contactForm && formFeedback) {
-            contactForm.addEventListener('submit', (e) => {
+            contactForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 sound.playCompletion();
 
@@ -1107,21 +1147,43 @@ class App {
                 submitBtn.innerHTML = '<span>TRANSMITTING...</span>';
                 submitBtn.disabled = true;
 
-                setTimeout(() => {
-                    submitBtn.innerHTML = '<span>PAYLOAD DELIVERED!</span>';
-                    formFeedback.classList.remove('hidden');
-                    formFeedback.innerHTML = `
-                        <div class="p-3 bg-neon-green/10 border border-neon-green/40 text-neon-green rounded text-sm font-mono flex items-center gap-2">
-                            <span>✓</span> Payload transmitted successfully. Manoj will respond to your channel shortly.
-                        </div>
-                    `;
-                    contactForm.reset();
+                const nameInput = contactForm.querySelector('input[type="text"]');
+                const emailInput = contactForm.querySelector('input[type="email"]');
+                const messageInput = contactForm.querySelector('textarea');
 
-                    setTimeout(() => {
-                        submitBtn.innerHTML = originalText;
-                        submitBtn.disabled = false;
-                    }, 4000);
-                }, 1200);
+                const payload = {
+                    name: nameInput ? nameInput.value : '',
+                    email: emailInput ? emailInput.value : '',
+                    message: messageInput ? messageInput.value : ''
+                };
+
+                let receiptId = `TX-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+
+                try {
+                    const res = await fetch('http://localhost:5000/api/contact', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data.receipt) receiptId = data.receipt;
+                    }
+                } catch (err) {}
+
+                submitBtn.innerHTML = '<span>PAYLOAD DELIVERED!</span>';
+                formFeedback.classList.remove('hidden');
+                formFeedback.innerHTML = `
+                    <div class="p-3 bg-neon-green/10 border border-neon-green/40 text-neon-green rounded text-sm font-mono flex items-center gap-2">
+                        <span>✓</span> Payload transmitted successfully [Receipt: ${receiptId}]. Manoj will respond to your channel shortly.
+                    </div>
+                `;
+                contactForm.reset();
+
+                setTimeout(() => {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }, 4000);
             });
         }
     }

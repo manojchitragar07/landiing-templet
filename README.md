@@ -1,79 +1,133 @@
-# Manoj Chitragar - High-Tech Interactive Portfolio Landing Page
+# Manoj Chitragar - Full-Stack Cyber Interactive Portfolio
 
-An ultra-modern, cyberpunk/developer-tool inspired portfolio landing page featuring an autonomous collaborative cursor swarm, dynamic speed ramping, technical typing with digital cipher decryption, and a fully interactive system terminal.
+A modern, high-tech portfolio architecture cleanly separated into independent **Frontend** and **Backend** micro-architectures. Features an autonomous collaborative cursor swarm with dynamic speed-ramping, physics-driven flocking, cyber decryption typing, and a live integrated Express API backend powering telemetry, terminal execution, and secure contact dispatches.
+
+---
+
+## 🏗️ Architecture Overview
+
+The repository is modularly structured into two decoupled tiers:
+
+```
+├── frontend/                     # Modern UI client (HTML5, Vanilla JS, Modular Canvas & CSS)
+│   ├── index.html                # Semantic interface (Hero, Terminal, Projects, Telemetry HUD)
+│   ├── css/
+│   │   └── style.css             # Cyberpunk styling, radar pings, glowing cursors, scanlines
+│   ├── js/
+│   │   ├── cursors.js            # Physics-driven speed-ramping autonomous cursor swarm & web lines
+│   │   ├── typing.js             # Decryption cipher typing engine synchronized with cursor caret
+│   │   ├── terminal.js           # Interactive terminal supporting local & backend API commands
+│   │   ├── audio.js              # Synthesized Web Audio API sound effects (no external assets)
+│   │   ├── main.js               # HUD telemetry, system status, API health check & form handler
+│   │   └── bundle.js             # Universal all-in-one bundle for instant zero-config loading
+│   └── package.json              # Frontend dev scripts (Vite / serve)
+│
+├── backend/                      # Production-ready Node.js & Express REST API
+│   ├── src/
+│   │   ├── server.js             # Express application with CORS, security headers & error handling
+│   │   └── routes/
+│   │       ├── telemetry.js      # Host telemetry (RAM, CPU cores, uptime, load)
+│   │       ├── contact.js        # Contact message validator & transmission receipts
+│   │       ├── projects.js       # Dynamic portfolio project metadata and tag filters
+│   │       └── terminal.js       # Remote terminal command execution engine
+│   ├── .env.example              # Sample environment configuration
+│   ├── README.md                 # Backend-specific documentation
+│   └── package.json              # Express, CORS, Dotenv dependencies
+│
+├── .gitignore                    # Environment & node_modules exclusions
+├── package.json                  # Root orchestration scripts
+└── README.md                     # Comprehensive project documentation
+```
 
 ---
 
 ## ⚡ Core Technical Features
 
-1. **Autonomous Cursor Swarm with Speed Ramping**:
-   - 14 distinct autonomous collaborative cursor agents (`Manoj::Core`, `Synapse.ai`, `HyperThread_01`, `V8_JIT`, `AST_Parser`, `Linter_Agent`, etc.).
-   - Physics-driven speed ramping: cursors accelerate along exponential velocity curves up to 2,800+ px/s with real-time dynamic banking and vector angles.
-   - Canvas2D glowing comet trails and particle sparks.
-   - Live telemetry in HUD: real-time swarm velocity, agent state, and coordinates.
+### 1. Autonomous Speed-Ramping Cursor Swarm
+- **Autonomous Agents**: 14 distinct autonomous cursor agents (`Manoj::Core`, `Synapse.ai`, `HyperThread_01`, `AST_Parser`, `Linter_Agent`, `Optimizer_z`, etc.).
+- **Dynamic Speed-Ramping**: Cursors dynamically accelerate along exponential velocity vectors up to 2,800+ px/s before gracefully decelerating.
+- **Monochromic Glow & Web Topology**: Monochromatic glowing pointers connected by delicate, subtle constellation web lines (`rgba(130, 200, 255, 0.22)`).
+- **Free-Flying Orbits**: Avoids rigid clumped docks or fixed ellipses; cursors maintain organic, fluid, speed-ramping motion across the hero section.
 
-2. **Confluence & Collaborative Typing Animation**:
-   - Hyperspeed cursors smoothly brake and converge onto the central target coordinate.
-   - The lead cursor locks onto the caret position while peer cursors orbit and highlight characters.
-   - **"Manoj Chitragar"** prints out letter-by-letter with a technical decryption cipher effect, keystroke audio clicks, and micro-spark bursts.
-   - Followed by the technical subtitle: `Creative Technologist // Full-Stack & Systems Architect`.
+### 2. Technical Collaborative Typing Sequence
+- Cursors smoothly converge onto the typing position while the primary cursor tracks the glowing active caret.
+- **"Manoj Chitragar"** prints character-by-character with a technical cipher decryption animation, synthesized keystroke clicks, and subtle micro-spark bursts.
+- Subtitle: `Creative Technologist // Full-Stack & Systems Architect`.
 
-3. **Interactive Post-Intro Experience**:
-   - **Ambient Cursor Intelligence**: Cursors gently roam, react to the user's cursor, or orbit interactive cards.
-   - **Interactive Cyber Terminal**: Real executable commands (`help`, `about`, `skills`, `projects`, `contact`, `matrix`, `clear`, `sudo`, `replay`).
-   - **Matrix Rain Canvas**: Toggleable digital rain backdrop (`btn-matrix-toggle` or `matrix` command).
-   - **Web Audio API Synthesizer**: Zero external MP3/WAV files needed; pure synthesized mechanical keystrokes, high-speed whooshes, target lock chimes, and UI sounds (toggleable in HUD).
-   - **Filterable Projects Grid**: Spotlight cards with mouse-following radial lighting shaders.
-   - **Skills Matrix**: Live competency meters for Frontend, Backend, AI Infrastructure, and DevOps.
-   - **Encrypted Contact Channel**: Contact form with simulated payload transmission feedback.
+### 3. Full-Stack API Integration
+- **Telemetry HUD**: Live ping indicators query the backend `/api/health` and `/api/telemetry` endpoints, with automatic offline fallback when running standalone.
+- **Remote Terminal Execution**: Cyber terminal runs both client-side commands (`help`, `about`, `projects`, `clear`, `matrix`) and remote backend commands (`ping`, `uptime`, `status`).
+- **Encrypted Contact Transmissions**: Contact form dispatches structured payloads to `POST /api/contact`, receiving a cryptographic receipt ID and timestamp.
 
 ---
 
-## 🚀 How to Run Locally
+## 🚀 Getting Started
 
-### Option 1: Direct in Browser
-Simply open `index.html` in your favorite web browser (Chrome, Safari, Firefox, Edge, Brave, etc.). No build step or server required!
+### Prerequisites
+- Node.js 18+ (optional for pure frontend preview, required for backend API)
+- npm or yarn
 
-### Option 2: Using Python HTTP Server
+---
+
+### Option A: Run Full-Stack (Frontend + Backend)
+
+1. **Install all dependencies**:
+   ```bash
+   npm run install:all
+   ```
+
+2. **Start both Backend and Frontend**:
+   ```bash
+   npm run dev
+   ```
+   - **Backend**: `http://localhost:5000`
+   - **Frontend**: `http://localhost:3000` (or open `frontend/index.html`)
+
+---
+
+### Option B: Run Services Individually
+
+#### 1. Backend API Service
 ```bash
-python3 -m http.server 8000
-```
-Then visit `http://localhost:8000`.
-
-### Option 3: Using Node / Vite
-```bash
+cd backend
 npm install
 npm run dev
+# Server listens on http://localhost:5000
+```
+
+#### 2. Frontend Client
+```bash
+cd frontend
+npm run dev
+# Or simply open frontend/index.html directly in any web browser!
 ```
 
 ---
 
-## 📂 File Architecture
+## 📡 REST API Reference
 
-```
-├── index.html          # Semantic HTML5 layout, HUD telemetry, projects, terminal, contact
-├── css/
-│   └── style.css       # Cyberpunk theme, JetBrains Mono typography, glowing borders, animations
-├── js/
-│   ├── audio.js        # Web Audio API sound synthesizer (zero external dependencies)
-│   ├── cursors.js      # Autonomous cursor swarm engine (speed ramping, trails, flocking)
-│   ├── typing.js       # Cipher decryption typing engine & coordinate synchronization
-│   ├── terminal.js     # Interactive cyber terminal console with custom commands
-│   └── main.js         # Master application orchestrator, HUD telemetry & card spotlight
-└── package.json        # Node script definitions (Vite dev & build)
-```
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/health` | Health check and server status |
+| `GET` | `/api/telemetry` | Real-time system memory, CPU cores, node version, and uptime |
+| `GET` | `/api/projects` | Dynamic project listings with tech stack tags and links |
+| `POST` | `/api/contact` | Submits contact inquiries; returns transmission receipt |
+| `POST` | `/api/terminal/execute` | Remote command executor for the interactive terminal |
 
 ---
 
 ## 🛠️ Controls in the Top HUD Bar
 
-- **SYS_ONLINE**: System status indicator.
-- **LOCAL**: Real-time clock with UTC offset.
-- **FPS**: Live framerate meter (60-120 FPS).
-- **X / Y**: Real-time user cursor coordinates.
-- **SWARM VELOCITY**: Live speed-ramp readout.
-- **AUDIO: [ON/OFF]**: Toggle synthesized typing and whoosh sound effects.
-- **SWARM: [ROAM / TURBO / CALM]**: Adjust background cursor speed and flocking.
-- **MATRIX**: Toggle the digital rain overlay.
-- **REPLAY**: Relaunch the speed-ramping intro and collaborative typing sequence anytime.
+- **SYS_ONLINE**: Live system and API connection indicator.
+- **FPS**: Real-time framerate meter (60-120 FPS).
+- **X / Y**: Live user mouse cursor coordinates.
+- **SWARM VELOCITY**: Live velocity readout of the speed-ramping cursors.
+- **AUDIO [ON/OFF]**: Toggle synthesized typing and whoosh audio effects.
+- **SWARM [ROAM / TURBO / CALM]**: Adjust background cursor swarm velocity.
+- **MATRIX**: Toggle digital rain background canvas.
+- **REPLAY**: Re-trigger the speed-ramping intro and collaborative typing sequence.
 
+---
+
+## 📜 License
+MIT License © Manoj Chitragar

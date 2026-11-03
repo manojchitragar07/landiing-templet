@@ -24,6 +24,9 @@ Available system commands:
   <span class="text-neon-cyan">projects</span>    - Display highlighted production projects
   <span class="text-neon-cyan">experience</span>  - View engineering background & milestones
   <span class="text-neon-cyan">contact</span>     - Display communication channels
+  <span class="text-neon-cyan">status</span>      - Query remote API server telemetry
+  <span class="text-neon-cyan">ping</span>        - Test roundtrip latency to backend daemon
+  <span class="text-neon-cyan">uptime</span>      - Query server daemon uptime
   <span class="text-neon-cyan">replay</span>      - Re-run speed-ramping cursor swarm intro
   <span class="text-neon-cyan">matrix</span>      - Trigger digital rain visual effect
   <span class="text-neon-cyan">clear</span>       - Clear the terminal screen
@@ -120,7 +123,7 @@ Status:     Encrypted direct channel ready. Send payload via Contact form below!
         this.print(`System initialized. Type <span class="text-neon-cyan font-bold">'help'</span> to see available commands.`);
     }
 
-    handleCommand(cmdText) {
+    async handleCommand(cmdText) {
         if (!cmdText) return;
         sound.playUiClick();
 
@@ -131,16 +134,38 @@ Status:     Encrypted direct channel ready. Send payload via Contact form below!
         this.print(`<span class="text-slate-400">visitor@manoj-sys:~$</span> <span class="text-white">${this.escapeHtml(cmdText)}</span>`);
 
         const lower = cmdText.toLowerCase();
+
+        // Check local command first
         if (this.commands[lower]) {
             const result = this.commands[lower]();
             if (result) {
                 this.print(result);
             }
-        } else {
-            this.print(`<span class="text-neon-magenta">zsh: command not found: ${this.escapeHtml(cmdText)}</span>. Type <span class="text-neon-cyan font-bold">'help'</span> for reference.`);
+            this.outputArea.scrollTop = this.outputArea.scrollHeight;
+            return;
         }
 
-        // Scroll to bottom
+        // Try remote daemon execution
+        try {
+            const res = await fetch('http://localhost:5000/api/terminal/execute', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ command: cmdText })
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                if (data.output) {
+                    this.print(data.output);
+                    this.outputArea.scrollTop = this.outputArea.scrollHeight;
+                    return;
+                }
+            }
+        } catch (e) {
+            // Daemon offline, continue to fallback
+        }
+
+        this.print(`<span class="text-neon-magenta">zsh: command not found: ${this.escapeHtml(cmdText)}</span>. Type <span class="text-neon-cyan font-bold">'help'</span> for reference.`);
         this.outputArea.scrollTop = this.outputArea.scrollHeight;
     }
 

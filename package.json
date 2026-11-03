@@ -1,18 +1,25 @@
 {
   "name": "manoj-chitragar-portfolio",
-  "version": "1.0.0",
-  "description": "High-tech interactive portfolio landing page with speed-ramping collaborative cursor swarm and technical typing sequence",
+  "version": "2.0.0",
+  "description": "High-tech interactive portfolio landing page with separated frontend & backend architectures",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "serve": "npx serve ."
+    "dev": "npm run dev:backend & npm run dev:frontend",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "start": "npm run start:backend & npm run start:frontend",
+    "start:frontend": "cd frontend && npx serve -p 3000 .",
+    "start:backend": "cd backend && npm start",
+    "install:all": "npm --prefix backend install && npm --prefix frontend install"
   },
-  "keywords": ["portfolio", "creative-technology", "interactive", "canvas", "cursor-swarm"],
+  "keywords": [
+    "portfolio",
+    "creative-technology",
+    "interactive",
+    "canvas",
+    "cursor-swarm",
+    "express",
+    "frontend-backend"
+  ],
   "author": "Manoj Chitragar",
-  "license": "MIT",
-  "devDependencies": {
-    "vite": "^5.4.10"
-  }
+  "license": "MIT"
 }
-
